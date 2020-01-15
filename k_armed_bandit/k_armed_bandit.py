@@ -107,16 +107,16 @@ class Simulate_Game(object):
                 choose_k = action_choose(parameter)
 
                 # obtain immediate reward
-                immediate_value = self.reward_func(choose_k)
+                immediate_reward = self.reward_func(choose_k)
 
                 # record average reward
-                cumulative_reward += immediate_value
+                cumulative_reward += immediate_reward
                 rewards[n, t] = cumulative_reward / (t+1)
 
                 # update q estimate function average reward
                 self.count_arm_k[choose_k] += 1
                 self.q_estimate[choose_k] += \
-                    (immediate_value - self.q_estimate[choose_k]) / self.count_arm_k[choose_k]
+                    (immediate_reward - self.q_estimate[choose_k]) / self.count_arm_k[choose_k]
 
         mean_reward = np.mean(rewards, axis=0)
         return mean_reward
