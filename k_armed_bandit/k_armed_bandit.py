@@ -9,8 +9,8 @@ Modify:
 
 
 # ----------------------------- dependences -----------------------------------
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # 1.15.5
+import matplotlib.pyplot as plt  # 3.1.1
 
 
 # ------------------------ bandit game environment ---------------------------
@@ -152,7 +152,7 @@ def e_greedy_simulate_main():
     plt.ylabel('T-step Average Reward')
     # plt.ylim([0, 1])
     plt.legend()
-    plt.savefig('./images/e_greedy_simulate.png', dpi=300)
+    plt.savefig('./images/e_greedy_simulate.png')
     plt.close()
 
 
@@ -185,7 +185,7 @@ def softmax_simulate_main():
     plt.ylabel('T-step Average Reward')
     # plt.ylim([0, 1])
     plt.legend()
-    plt.savefig('./images/softmax_simulate.png', dpi=300)
+    plt.savefig('./images/softmax_simulate.png')
     plt.close()
 
 
@@ -225,12 +225,12 @@ def optimize_parameters():
     plt.ylabel('Expect average reward')
     plt.xlabel('Parameters')
     plt.legend()
-    plt.savefig('./images/optimize_parameters.png', dpi=300)
+    plt.savefig('./images/optimize_parameters.png')
     plt.close()
 
 
 if __name__ == "__main__":
     np.random.seed(1234)
     e_greedy_simulate_main()
-    # softmax_simulate_main()
-    # optimize_parameters()
+    softmax_simulate_main()
+    optimize_parameters()
