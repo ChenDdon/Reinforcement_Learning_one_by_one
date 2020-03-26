@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 # ----------------------------- Reproducibility -------------------------------
 np.random.seed(1212)
 
+
 # ------------------------ Bandit game environment ----------------------------
 class Bandit(object):
     """
@@ -24,7 +25,7 @@ class Bandit(object):
     """
     def __init__(self):
         # probability of each arm receiving a reward
-        self.distribution = [0.4, 0.1, 0.1, 0.3, 0.4, 0.1, 0.2, 0.1, 0.2, 0.3]
+        self.distribution = [0.4, 0.1, 0.1, 0.3, 0.4, 0.1, 0.2, 0.4, 0.2, 0.3]
 
         # default 10 arms, k=10
         self.k_arm = len(self.distribution)
@@ -154,7 +155,7 @@ def e_greedy_simulate_main():
     reward_func = bandit.reward_func
 
     # action chosen method
-    e_greedy = 0.1
+    e_greedy = 0.02
     action_choose = Action_Choose(k_arm, parameter=e_greedy)
     algorithm = action_choose.e_greedy_choose
 
@@ -173,6 +174,7 @@ def e_greedy_simulate_main():
 
     # pictures
     plt.style.use('ggplot')
+    plt.tight_layout()
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     p1 = ax1.plot(np.mean(n_mean_reward, axis=0), '.', 
@@ -180,7 +182,6 @@ def e_greedy_simulate_main():
     ax1.set_title(f'$\epsilon$-greedy Algorithm ($\epsilon$={action_choose.parameter})')
     ax1.set_ylabel('T-step Average Reward')
     ax1.set_xlabel('T-steps')
-
     ax2 = ax1.twinx()
     p2 = ax2.plot(np.mean(n_cumulative_reward, axis=0), '.', 
                   color='b', label='cumulative')
@@ -203,7 +204,7 @@ def softmax_simulate_main():
     reward_func = bandit.reward_func
 
     # action chosen method    
-    tau = 0.05
+    tau = 0.02
     action_choose = Action_Choose(k_arm, parameter=tau)
     algorithm = action_choose.softmax_choose
 
@@ -222,6 +223,7 @@ def softmax_simulate_main():
 
     # pictures
     plt.style.use('ggplot')
+    plt.tight_layout()
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     p1 = ax1.plot(np.mean(n_mean_reward, axis=0), '.', 
@@ -229,7 +231,6 @@ def softmax_simulate_main():
     ax1.set_title(f'Softmax Algorithm ($\\tau$={action_choose.parameter})')
     ax1.set_ylabel('T-step Average Reward')
     ax1.set_xlabel('T-steps')
-
     ax2 = ax1.twinx()
     p2 = ax2.plot(np.mean(n_cumulative_reward, axis=0), '.', 
                   color='b', label='cumulative')
@@ -289,6 +290,7 @@ def optimize_parameters_main():
 
     # save result
     plt.style.use('ggplot')
+    plt.tight_layout()
     plt.plot(e_greedy, expect_reward_e_greedy, '.-', label='$\epsilon$-greedy')
     plt.plot(tau, expect_reward_softmax, '.-', label='Softmax')
     plt.title('parameter optimization')
@@ -300,6 +302,6 @@ def optimize_parameters_main():
 
 
 if __name__ == "__main__":
-    # e_greedy_simulate_main()
+    e_greedy_simulate_main()
     # softmax_simulate_main()
-    optimize_parameters_main()
+    # optimize_parameters_main()
