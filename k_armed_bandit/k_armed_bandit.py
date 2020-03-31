@@ -319,7 +319,7 @@ def optimize_parameters_main(step_size=200, n_epiosde=100):
 
 if __name__ == "__main__":
     e_greedy_simulate_main()
-    # softmax_simulate_main()
-    # e_greedy_decay_simulate_main()
+    softmax_simulate_main()
+    e_greedy_decay_simulate_main()
     optimize_parameters_main()
     print('End!')
