@@ -40,12 +40,12 @@ class Bandit(object):
             reward [int(default)] -- the reward of kth arm
         """
         prob = [self.distribution[choose_k], 1 - self.distribution[choose_k]]
-        reward = np.random.choice([1.5, -1], p=prob)
+        reward = np.random.choice([2, -1], p=prob)
 
         return reward
 
 
-# ------------------------ How to choose action ------------------------------
+# ------------------------- How to choose action ------------------------------
 class Action_Choose(object):
     def __init__(self, k_arm=10, parameter=0.03):
         # arm's indices
@@ -54,7 +54,7 @@ class Action_Choose(object):
         # initial action parameter
         self.parameter = parameter
 
-    def e_greedy_choose(self, q_estimate):
+    def e_greedy_choose(self, q_estimate, t):
         # e-greedy algorithm
 
         e_greedy = self.parameter
@@ -63,8 +63,8 @@ class Action_Choose(object):
         else:
             choose_k = np.argmax(q_estimate)
         return choose_k
-    
-    def softmax_choose(self, q_estimate):
+
+    def softmax_choose(self, q_estimate, t):
         # Boltzmann distribution of all k arms
 
         tau_temperature = self.parameter
@@ -81,15 +81,22 @@ class Action_Choose(object):
         choose_k = np.random.choice(self.indices, p=boltzmann_distribution)
         return choose_k
 
+    def e_greedy_decay_choose(self, q_estimate, t):
+        # e-greedy decay
+        # e_greedy = self.parameter / (t + 1)**0.5
+        e_greedy = 1 / (t + 1)**0.5
+        if np.random.rand() < e_greedy:
+            choose_k = np.random.choice(self.indices)
+        else:
+            choose_k = np.argmax(q_estimate)
+        return choose_k
+    
 
-# --------------------------- How to play -------------------------------------
+# ------------------------------ Simulate -------------------------------------
 class Simulate_Game(object):
-    def __init__(self, k_arm, reward_func, step_size, method=None):
+    def __init__(self, k_arm, reward_func, method=None):
         self.k_arm = k_arm
         self.reward_func = reward_func
-
-        # step size for each episode
-        self.step_size = step_size
 
         # choose algorithm to simulate the game
         self.action_choose = self.build_method(method)
@@ -110,45 +117,52 @@ class Simulate_Game(object):
         else:
             return method
 
-    def _default_action_method(self, parameter=None, q_estimate=None):
+    def _default_action_method(self, q_estimate=None, t=None):
         # default method to choose action in each step
         # choose action randomly
         choose_k = np.random.choice(self.indices)
         return choose_k
 
-    def simulate_loop(self):
-        # rewards = np.zeros((self.n_episode, self.step_size), dtype=np.float32)
-        # for n in range(self.n_episode):
+    def simulate_loop(self, step_size=100, n_episode=10):
 
-        # reset bandit and initial
-        self.reset_bandit()
-        cumulative_reward = 0
-        cumulative_reward_all = np.zeros((self.step_size, ), dtype=float)
-        average_reward = np.zeros((self.step_size, ), dtype=float)
+        # store n episodes result
+        n_cumulative_reward = np.zeros((n_episode, step_size), dtype=float)
+        n_mean_reward = np.zeros((n_episode, step_size), dtype=float)
 
-        # step loop
-        for t in range(self.step_size):
-            # choose k_th arm
-            choose_k = self.action_choose(self.q_estimate)
+        for i in range(n_episode):
+            # reset bandit and initial
+            self.reset_bandit()
+            cumulative_reward = 0
+            cumulative_reward_all = np.zeros((step_size, ), dtype=float)
+            average_reward = np.zeros((step_size, ), dtype=float)
 
-            # obtain immediate reward
-            immediate_value = self.reward_func(choose_k)
+            # step loop
+            for t in range(step_size):
+                # choose k_th arm
+                choose_k = self.action_choose(self.q_estimate, t)
 
-            # record average reward
-            cumulative_reward += immediate_value
-            cumulative_reward_all[t] = cumulative_reward
-            average_reward[t] = cumulative_reward / (t + 1)
+                # obtain immediate reward
+                immediate_value = self.reward_func(choose_k)
 
-            # update q estimate function average reward
-            self.count_arm_k[choose_k] += 1
-            self.q_estimate[choose_k] += \
-                (immediate_value - self.q_estimate[choose_k]) / self.count_arm_k[choose_k]
-            
-        return cumulative_reward_all, average_reward
+                # record average reward
+                cumulative_reward += immediate_value
+                cumulative_reward_all[t] = cumulative_reward
+                average_reward[t] = cumulative_reward / (t + 1)
+
+                # update q estimate function average reward
+                self.count_arm_k[choose_k] += 1
+                self.q_estimate[choose_k] += \
+                    (immediate_value - self.q_estimate[choose_k]) / self.count_arm_k[choose_k]
+
+            n_cumulative_reward[i, :] = cumulative_reward_all
+            n_mean_reward[i, :] = average_reward
+
+        # return shape: [1, step_size]; [1, step_size]
+        return np.mean(n_mean_reward, axis=0), np.mean(n_cumulative_reward, axis=0)
 
 
 # ------------------------- Test and Optimize ---------------------------------
-def e_greedy_simulate_main():
+def e_greedy_simulate_main(step_size=2000, n_epiosde=100):
     # load k_armed bandit
     bandit = Bandit()
     k_arm = bandit.k_arm
@@ -159,32 +173,21 @@ def e_greedy_simulate_main():
     action_choose = Action_Choose(k_arm, parameter=e_greedy)
     algorithm = action_choose.e_greedy_choose
 
-    # simulation parameters
-    step_size = 1000
-    simulate_g = Simulate_Game(k_arm, reward_func, step_size, method=algorithm)
-
-    # main loop
-    n_episode = 100
-    n_cumulative_reward = np.zeros((n_episode, step_size), dtype=float)
-    n_mean_reward = np.zeros((n_episode, step_size), dtype=float)
-    for i in range(n_episode):
-        cumulative_reward, mean_reward = simulate_g.simulate_loop()
-        n_cumulative_reward[i, :] = cumulative_reward
-        n_mean_reward[i, :] = mean_reward
+    # simulation
+    simulator = Simulate_Game(k_arm, reward_func, method=algorithm)
+    mean_reward, cumulative_reward = simulator.simulate_loop(step_size, n_epiosde)
 
     # pictures
     plt.style.use('ggplot')
     plt.tight_layout()
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
-    p1 = ax1.plot(np.mean(n_mean_reward, axis=0), '.', 
-                  color='r', label=f'average')
+    p1 = ax1.plot(mean_reward, '.', color='r', label=f'average')
     ax1.set_title(f'$\epsilon$-greedy Algorithm ($\epsilon$={action_choose.parameter})')
     ax1.set_ylabel('T-step Average Reward')
     ax1.set_xlabel('T-steps')
     ax2 = ax1.twinx()
-    p2 = ax2.plot(np.mean(n_cumulative_reward, axis=0), '.', 
-                  color='b', label='cumulative')
+    p2 = ax2.plot(cumulative_reward, '.', color='b', label='cumulative')
     ax2.set_ylabel('Cumulative Reward')
     
     # legend
@@ -197,7 +200,7 @@ def e_greedy_simulate_main():
     plt.close()
 
 
-def softmax_simulate_main():
+def softmax_simulate_main(step_size=2000, n_epiosde=100):
     # load k_armed bandit
     bandit = Bandit()
     k_arm = bandit.k_arm
@@ -208,32 +211,21 @@ def softmax_simulate_main():
     action_choose = Action_Choose(k_arm, parameter=tau)
     algorithm = action_choose.softmax_choose
 
-    # simulation parameters
-    step_size = 1000
-    simulate_g = Simulate_Game(k_arm, reward_func, step_size, method=algorithm)
-
-    # main loop
-    n_episode = 100
-    n_cumulative_reward = np.zeros((n_episode, step_size), dtype=float)
-    n_mean_reward = np.zeros((n_episode, step_size), dtype=float)
-    for i in range(n_episode):
-        cumulative_reward, mean_reward = simulate_g.simulate_loop()
-        n_cumulative_reward[i, :] = cumulative_reward
-        n_mean_reward[i, :] = mean_reward
+    # simulation
+    simulator = Simulate_Game(k_arm, reward_func, method=algorithm)
+    mean_reward, cumulative_reward = simulator.simulate_loop(step_size, n_epiosde)
 
     # pictures
     plt.style.use('ggplot')
     plt.tight_layout()
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
-    p1 = ax1.plot(np.mean(n_mean_reward, axis=0), '.', 
-                  color='r', label=f'average')
+    p1 = ax1.plot(mean_reward, '.', color='r', label=f'average')
     ax1.set_title(f'Softmax Algorithm ($\\tau$={action_choose.parameter})')
     ax1.set_ylabel('T-step Average Reward')
     ax1.set_xlabel('T-steps')
     ax2 = ax1.twinx()
-    p2 = ax2.plot(np.mean(n_cumulative_reward, axis=0), '.', 
-                  color='b', label='cumulative')
+    p2 = ax2.plot(cumulative_reward, '.', color='b', label='cumulative')
     ax2.set_ylabel('Cumulative Reward')
     
     # legend
@@ -246,7 +238,45 @@ def softmax_simulate_main():
     plt.close()
 
 
-def optimize_parameters_main():
+def e_greedy_decay_simulate_main(step_size=2000, n_epiosde=100):
+    # load k_armed bandit
+    bandit = Bandit()
+    k_arm = bandit.k_arm
+    reward_func = bandit.reward_func
+
+    # action chosen method
+    e_greedy = 1
+    action_choose = Action_Choose(k_arm, parameter=e_greedy)
+    algorithm = action_choose.e_greedy_decay_choose
+
+    # simulation
+    simulator = Simulate_Game(k_arm, reward_func, method=algorithm)
+    mean_reward, cumulative_reward = simulator.simulate_loop(step_size, n_epiosde)
+    print(simulator.q_estimate)
+    # pictures
+    plt.style.use('ggplot')
+    plt.tight_layout()
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    p1 = ax1.plot(mean_reward, '.', color='r', label=f'average')
+    ax1.set_title(f'$\epsilon$-greedy decay Algorithm ($\epsilon$={action_choose.parameter})')
+    ax1.set_ylabel('T-step Average Reward')
+    ax1.set_xlabel('T-steps')
+    ax2 = ax1.twinx()
+    p2 = ax2.plot(cumulative_reward, '.', color='b', label='cumulative')
+    ax2.set_ylabel('Cumulative Reward')
+    
+    # legend
+    p_s = p1 + p2
+    labs = [p.get_label() for p in p_s]
+    ax2.legend(p_s, labs, loc='center right')
+
+    # save picture
+    plt.savefig('./images/e_greedy_decay_simulate.png', dpi=300)
+    plt.close()
+
+
+def optimize_parameters_main(step_size=200, n_epiosde=100):
     # load k_armed bandit
     bandit = Bandit()
     k_arm = bandit.k_arm
@@ -254,45 +284,31 @@ def optimize_parameters_main():
 
     # action chosen method
     action_choose = Action_Choose(k_arm)
+
+    # parameter range
+    parameters = np.arange(0.01, 1.01, 0.05)
     
-    # simulation parameters
-    step_size = 1000
+    # initial simulator
+    e_greedy_simulator = Simulate_Game(k_arm, reward_func, method=action_choose.e_greedy_choose)
+    softmax_simulator = Simulate_Game(k_arm, reward_func, method=action_choose.softmax_choose)
+    e_greedy_decay_simulator = Simulate_Game(k_arm, reward_func, method=action_choose.e_greedy_decay_choose)
+    simulators = [e_greedy_simulator, softmax_simulator, e_greedy_decay_simulator]
 
-    # e_greedy
-    e_greedy = np.arange(0.01, 1.01, 0.05)
-    algorithm = action_choose.e_greedy_choose
-    simulate_g = Simulate_Game(k_arm, reward_func, step_size, method=algorithm)
-
-    expect_reward_e_greedy = np.zeros((len(e_greedy), ), dtype=float)
-    n_episode = 100
-    for i in range(len(e_greedy)):
-        action_choose.parameter = e_greedy[i]
-        n_episode_reward = 0
-        for j in range(n_episode):
-            _, mean_reward = simulate_g.simulate_loop()
-            n_episode_reward += mean_reward[-1]
-        expect_reward_e_greedy[i] = n_episode_reward / n_episode
-
-    # softmax
-    tau = np.arange(0.01, 1.01, 0.05)
-    algorithm = action_choose.softmax_choose
-    simulate_g = Simulate_Game(k_arm, reward_func, step_size, method=algorithm)
-
-    expect_reward_softmax = np.zeros((len(tau), ), dtype=float)
-    n_episode = 100
-    for i in range(len(tau)):
-        action_choose.parameter = tau[i]
-        n_episode_reward = 0
-        for j in range(n_episode):
-            _, mean_reward = simulate_g.simulate_loop()
-            n_episode_reward += mean_reward[-1]
-        expect_reward_softmax[i] = n_episode_reward / n_episode
+    # initial average reward container and cumulative reward container
+    all_cumulative_reward = np.zeros((len(simulators), len(parameters)), dtype=float)
+    
+    for n_sim in range(len(simulators)):
+        for i in range(len(parameters)):
+            action_choose.parameter = parameters[i]
+            _, cumulative_reward = simulators[n_sim].simulate_loop(step_size, n_epiosde)
+            all_cumulative_reward[n_sim, i] = cumulative_reward[-1]
 
     # save result
     plt.style.use('ggplot')
     plt.tight_layout()
-    plt.plot(e_greedy, expect_reward_e_greedy, '.-', label='$\epsilon$-greedy')
-    plt.plot(tau, expect_reward_softmax, '.-', label='Softmax')
+    plt.plot(parameters, all_cumulative_reward[0], '.-', label='$\epsilon$-greedy')
+    plt.plot(parameters, all_cumulative_reward[1], '.-', label='Softmax')
+    plt.plot(parameters, all_cumulative_reward[2], '.-', label='$\epsilon$-greedy decay')
     plt.title('parameter optimization')
     plt.ylabel('Expect average reward')
     plt.xlabel('Parameters')
@@ -304,4 +320,6 @@ def optimize_parameters_main():
 if __name__ == "__main__":
     e_greedy_simulate_main()
     # softmax_simulate_main()
-    # optimize_parameters_main()
+    # e_greedy_decay_simulate_main()
+    optimize_parameters_main()
+    print('End!')
