@@ -16,5 +16,5 @@ Learning Reinforcement Learning algorithms one by one.
 
 ## Model Based -- simple maze
 
-- [ModelBasedRL_maze.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_based_simple_maze/ModelBased_maze.ipynb)
+- [ModelBasedRL_maze.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/tree/master/model_based_simple_maze/ModelBasedRL_maze.ipynb)
 - [MazeDemo.gif](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_based_simple_maze/MazeDemo.gif)
