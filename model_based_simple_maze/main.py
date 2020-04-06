@@ -136,7 +136,7 @@ def main():
 
     # initial observation
     state = env.reset()
-    
+    time.sleep(10)
     # simulation
     while True:
         action_ = optimal_policy.loc[str(state)].values.item()
@@ -147,7 +147,9 @@ def main():
         # fresh env
         env.render()
         time.sleep(1)
-        if done: break
+        if done: 
+            time.sleep(10)
+            break
 
 
 if __name__ == '__main__':
