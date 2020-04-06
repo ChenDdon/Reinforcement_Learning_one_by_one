@@ -4,7 +4,7 @@ Learning Reinforcement Learning algorithms one by one.
 
 ----
 
-## k-armed bandit
+## K-armed Bandit
 
 - [k_armed_bandit.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/k_armed_bandit/k_armed_bandit.ipynb)
 - [k_armed_bandit.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/k_armed_bandit/k_armed_bandit.py)
@@ -13,3 +13,8 @@ Learning Reinforcement Learning algorithms one by one.
 - [Figure 3: Parameters optimization for epsilon-greedy and Softmax](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/k_armed_bandit/images/optimize_parameters.png)
 
 ----
+
+## Model Based -- simple maze
+
+- [ModelBasedRL_maze.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_based_simple_maze/ModelBased_maze.ipynb)
+- [MazeDemo.gif](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_based_simple_maze/MazeDemo.gif)
