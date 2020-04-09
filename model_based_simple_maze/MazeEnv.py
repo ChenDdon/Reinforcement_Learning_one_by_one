@@ -12,7 +12,7 @@ Modify:
 import numpy as np
 import time
 import sys
-import tkinter as tk  
+import tkinter as tk
 # import Tkinter as tk  # for python 2.x
 
 
@@ -51,14 +51,14 @@ class Maze(tk.Tk, object):
         # create origin unit center
         origin = np.array([unit//2, unit//2])
 
-        # create red rectangle
+        # create red circle
         self.rect = self.canvas.create_oval(origin[0] - unit//2,
                                             origin[1] - unit//2,
                                             origin[0] + unit//2,
                                             origin[1] + unit//2,
                                             fill='red')
 
-        # create terminals, defalut: 2 terminals
+        # create terminals, defalut: 1 terminal
         terminal_state = np.array([[2, 5]])
         self.all_terminals = []
         for t in range(np.shape(terminal_state)[0]):
@@ -93,7 +93,7 @@ class Maze(tk.Tk, object):
         self.update()
         time.sleep(0.5)
 
-        # delete original rectangle
+        # delete original object
         self.canvas.delete(self.rect)
         origin = np.array([unit//2, unit//2])
         self.rect = self.canvas.create_oval(origin[0] - unit//2,
