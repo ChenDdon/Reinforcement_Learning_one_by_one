@@ -81,7 +81,7 @@ def maze_simulation(max_episode, env, RL_algorithm):
         while True:
 
             # fresh env
-            # env.render()
+            env.render()
 
             # RL take action and get next state and reward
             state_, reward, done = env.step(action)
@@ -131,7 +131,8 @@ def main():
                     color='red', alpha=0.3)
     plt.xlabel('Episodes')
     plt.ylabel('Reward')
-    plt.savefig(f'MAZE_SARSA_reward.png', dpi = 300)
+    plt.title('SARSA Reward')
+    plt.savefig('MAZE_SARSA_reward.png', dpi = 300)
     plt.close()
 
 if __name__ == "__main__":
