@@ -19,3 +19,22 @@ Learning Reinforcement Learning algorithms one by one.
 
 - [ModelBasedRL_maze.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/tree/master/model_based_simple_maze/ModelBasedRL_maze.ipynb)
 - [MazeDemo.gif](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_based_simple_maze/MazeDemo.gif)
+
+----
+
+## Model Free -- SARSA(Tabular)
+
+- [MAZE_SARSA_demo.gif](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_SARSA/MAZE_SARSA_demo.gif)
+- [MAZE_SARSA_reward.png](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_SARSA/MAZE_SARSA_reward.png)
+- [SARSA_tabular.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_SARSA/SARSA_tabular.py)
+
+----
+
+## Model Free -- Q-learning(Tabular)
+
+- [MAZE_Qlearning_reward.png](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_Qlearning/MAZE_Qlearning_reward.png)
+- [Qlearning_tabular.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_Qlearning/Qlearning_tabular.py)
+
+----
+
+
