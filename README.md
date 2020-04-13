@@ -34,6 +34,7 @@ Learning Reinforcement Learning algorithms one by one.
 
 - [MAZE_Qlearning_reward.png](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_Qlearning/MAZE_Qlearning_reward.png)
 - [Qlearning_tabular.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_Qlearning/Qlearning_tabular.py)
+- [ModelFreeNote.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_SARSA/ModelFreeNote.ipynb)
 
 ----
 
