@@ -27,6 +27,7 @@ Learning Reinforcement Learning algorithms one by one.
 - [MAZE_SARSA_demo.gif](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_SARSA/MAZE_SARSA_demo.gif)
 - [MAZE_SARSA_reward.png](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/model_free_tabular_SARSA/MAZE_SARSA_reward.png)
 - [SARSA_tabular.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_SARSA/SARSA_tabular.py)
+- [ModelFreeNote.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/model_free_tabular_SARSA/ModelFreeNote.ipynb)
 
 ----
 
