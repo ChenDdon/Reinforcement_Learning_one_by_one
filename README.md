@@ -39,4 +39,10 @@ Learning Reinforcement Learning algorithms one by one.
 
 ----
 
+## Deep Q-Network(DQN)
 
+- [flappy_dog.png](https://raw.githubusercontent.com/ChenDdon/Reinforcement_Learning_one_by_one/master/DQN_flappy_dog/flappy_dog.png)
+- [FlappyDogEnv.py](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/DQN_flappy_dog/FlappyDogEnv.py)
+- [VFA_DQN_notebook.ipynb](https://github.com/ChenDdon/Reinforcement_Learning_one_by_one/blob/master/DQN_flappy_dog/VFA_DQN_notebook.py)
+
+----
